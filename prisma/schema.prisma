@@ -22,6 +22,7 @@ model User {
   image         String?
 
   jobs          JobApplication[]
+  resumes       Resume[]
 
   accounts      Account[]
   sessions      Session[]
@@ -44,6 +45,19 @@ model JobApplication {
   updatedAt     DateTime  @updatedAt
   userId        String  
   user          User    @relation(fields: [userId], references: [id])    
+}
+
+model Resume {
+  id            String    @id @default(cuid())
+  fileName      String
+  fileUrl       String
+  fileType      String
+  fileSize      Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+
 }
 
 model Account {
