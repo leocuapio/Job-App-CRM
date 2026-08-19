@@ -26,6 +26,29 @@ export async function POST(request: Request) {
             )
         }
 
+        const startofDay = new Date();
+        startofDay.setHours(0,0,0,0);
+
+        const startofTmrw = new Date(startofDay)
+        startofTmrw.setDate(startofTmrw.getDate() + 1);
+        const count = await prisma.resume.count({
+            where: {
+                userId: session.user.id,
+                createdAt: {
+                    gte: startofDay,
+                    lt: startofTmrw
+                }
+            }
+        })
+
+        if (count >= 5) {
+            return NextResponse.json(
+                {error: "Too many requests"},
+                {status: 429}
+            )
+
+        }
+
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
