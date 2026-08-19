@@ -1,9 +1,9 @@
 "use client"
 
-import Applications from "@/components/applications";
-import ApplicationForm from "@/components/newApplicationForm";
-import Search from "@/components/searchBar"
-import SortApplications from "@/components/sortApplications";
+import Applications from "@/components/applications/applications";
+import ApplicationForm from "@/components/applications/newApplicationForm";
+import Search from "@/components/applications/searchBar"
+import SortApplications from "@/components/applications/sortApplications";
 import { Application } from "@/types/application";
 import type { Session } from "next-auth";
 import { useEffect, useState } from "react";

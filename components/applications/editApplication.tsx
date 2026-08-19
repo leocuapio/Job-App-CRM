@@ -40,7 +40,7 @@ export default function EditApplication({ open, handleClose, editApp, refresh }:
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const res = await fetch(`api/applications/${editApp.id}`,
+    const res = await fetch(`/api/applications/${editApp.id}`,
       {
         method: "PATCH",
         headers: {

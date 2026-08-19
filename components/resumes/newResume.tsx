@@ -7,6 +7,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -26,9 +27,30 @@ export default function NewResume() {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const [file, setFile] = useState<File | null>(null)
 
-    function handleSubmit () {
+
+    async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        const data = new FormData();
+
+        if (file) {
+
+            //Added file meta data to postgreSQL
+            data.append('file', file)
+            const res = await fetch ("/api/resumes", 
+                {
+                    method: 'POST',
+                    body: data
+                })
+            const resData = await res.json()
+            console.log(resData)
+            
         
+        } else {
+            console.error("No file attached!", 404)
+            return 
+        }
     }
     return (
         <>
@@ -47,7 +69,7 @@ export default function NewResume() {
                     '&:hover': { backgroundColor: '#393431' },
                 }}
             >
-                New Application
+                New Resume
             </Button>
             <Modal
                     open={open}
@@ -60,10 +82,10 @@ export default function NewResume() {
                         New Resume
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ color: '#6d655c', fontSize: 14, mb: 3 }}>
-                        Attach your current resume. 
+                        Attach your current resume.
                     </Typography>
                     <form className="grid gap-3" onSubmit={handleSubmit}>
-                        
+                        <input type="file" accept =".pdf,.doc.docx" name="file" id=""  onChange={(e) => setFile(e.target.files?.[0] ?? null)}/>
                         <button className="mt-2 rounded-md bg-[#221f1f] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#393431] focus:outline-none focus:ring-2 focus:ring-[#221f1f] focus:ring-offset-2" type="submit">Submit</button>
                     </form>
                     </Box>

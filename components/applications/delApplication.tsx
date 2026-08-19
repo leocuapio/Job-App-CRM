@@ -18,7 +18,7 @@ interface Params {
 export default function DeleteApplication({open, handleClose, delApp, refresh}: Params) {
 
     async function handleAgree() {
-        const res = await fetch(`api/applications/${delApp.id}`,
+        const res = await fetch(`/api/applications/${delApp.id}`,
             {
                 method: "DELETE"
             }
