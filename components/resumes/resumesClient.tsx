@@ -38,7 +38,7 @@ export default function ResumesClient({ session }: Params) {
             <span className="font-medium text-[#221f1f]">{session.user?.email}</span>
           </p>
         </div>
-        <NewResume />
+        <NewResume getAllResumes = {getAllResumes} />
       </header>
 
       <main className="min-h-0 flex-1">

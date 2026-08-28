@@ -23,7 +23,11 @@ const style = {
     p: { xs: 3, sm: 4 },
   };
 
-export default function NewResume() {
+interface Params {
+    getAllResumes: () => void;
+}
+
+export default function NewResume({getAllResumes} : Params) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -45,6 +49,9 @@ export default function NewResume() {
                 })
             const resData = await res.json()
             console.log(resData)
+            getAllResumes();
+            handleClose();
+
             
         
         } else {
