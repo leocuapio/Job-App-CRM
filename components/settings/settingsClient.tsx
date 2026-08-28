@@ -25,7 +25,7 @@ export default function SettingsClient({ session }: Params) {
       </header>
       <main className="min-h-0 flex-1">
         <section className="rounded-lg border border-[#ded7cc] bg-white p-6 shadow-[0_18px_60px_rgba(34,31,31,0.06)]">
-          <p className="text-sm text-[#6d655c]">No resumes yet. Add one to get started.</p>
+          <p className="text-sm text-[#6d655c]">Your settings will go here</p>
         </section>
       </main>
     </div>
