@@ -1,0 +1,18 @@
+name: CI
+
+#when should github run this workflow (when you push or pr)
+on:
+  push:
+  pull_request:
+
+#here is a job I want Githubs machine to perform and calling it ...
+jobs:
+  build-and-check:
+
+#Run this job on ubunty machine 
+runs-on: ubuntu-latest
+
+#Take the code from my github repo and make it available on this machine
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
