@@ -4,4 +4,7 @@ export type Resume = {
     fileSize: number,
     fileType: string,
     fileUrl: string,
+    extractedText: string | null,
+    processingStatus: string | null,
+    aiAnalysis: string | null,
 }

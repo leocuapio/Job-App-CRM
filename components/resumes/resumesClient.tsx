@@ -7,21 +7,18 @@ import { useEffect, useState } from "react"
 import Resumes from "./resumes"
 
 interface Params {
-  session: Session
+  session: Session;
+  initialResumes: Resume[];
 }
 
-export default function ResumesClient({ session }: Params) {
-  const [resumes, setResumes] = useState<Resume[]>([])
+export default function ResumesClient({ session, initialResumes }: Params) {
+  const [resumes, setResumes] = useState<Resume[]>(initialResumes)
 
   async function getAllResumes () {
     const res = await fetch("/api/resumes")
     const data = await res.json()
     setResumes(data)
   }
-
-  useEffect(() => {
-    getAllResumes();
-  }, [])
 
   return (
     <div className="flex flex-1 flex-col gap-5">

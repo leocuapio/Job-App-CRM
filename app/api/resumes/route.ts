@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { s3 } from "@/lib/s3";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
+import { resumeQueue } from "@/lib/queue";
 
 import { NextResponse, NextRequest } from "next/server";
 
@@ -41,13 +42,13 @@ export async function POST(request: Request) {
             }
         })
 
-        if (count >= 5) {
-            return NextResponse.json(
-                {error: "Too many requests"},
-                {status: 429}
-            )
+        // if (count >= 5) {
+        //     return NextResponse.json(
+        //         {error: "Too many requests"},
+        //         {status: 429}
+        //     )
 
-        }
+        // }
 
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
@@ -73,6 +74,16 @@ export async function POST(request: Request) {
             }
         })
 
+        console.log(
+            "Redis host:",
+            process.env.REDIS_URL?.replace(/:[^:@]*@/, ":PASSWORD@")
+          );
+
+        const job = await resumeQueue.add("process-resume", {
+            resumeId: data.id
+        })
+
+        console.log("Added job:", job.id);
         return NextResponse.json(
             { success: true, key, data }
         )

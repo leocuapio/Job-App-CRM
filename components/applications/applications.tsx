@@ -151,7 +151,7 @@ export default function Applications({sortOption, applications, getApplications,
                 </section>
             ))}
             {editApp && 
-            <EditApplication open = {open} handleClose= {handleClose} editApp = {editApp } refresh = {getApplications}/>
+            <EditApplication key = {editApp.id} open = {open} handleClose= {handleClose} editApp = {editApp } refresh = {getApplications}/>
             }
             {delApp && 
             <DeleteApplication open = {delOpen} handleClose = {handleDelClose} delApp = {delApp} refresh = {getApplications}/>

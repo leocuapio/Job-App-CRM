@@ -53,6 +53,9 @@ model Resume {
   fileUrl       String
   fileType      String
   fileSize      Int
+  extractedText String?
+  processingStatus String?
+  aiAnalysis    String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   userId        String

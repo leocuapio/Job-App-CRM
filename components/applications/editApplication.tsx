@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Application } from '@/types/application';
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent } from 'react';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -54,10 +54,6 @@ export default function EditApplication({ open, handleClose, editApp, refresh }:
     handleClose();
     refresh();
   }
-
-  useEffect(() => {
-    setUpdatedApp(editApp)
-  }, [editApp])
 
   return (
     <Modal

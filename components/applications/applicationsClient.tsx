@@ -6,16 +6,17 @@ import Search from "@/components/applications/searchBar"
 import SortApplications from "@/components/applications/sortApplications";
 import { Application } from "@/types/application";
 import type { Session } from "next-auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface Params {
     session: Session;
+    initialApplications: Application[];
 }
 
-export default function ApplicationsClient({session}: Params) {
+export default function ApplicationsClient({session, initialApplications}: Params) {
 
     const [sortOption, setsortOption] = useState<string>("default")
-    const [applications, setApplications] = useState<Application[]>([])
+    const [applications, setApplications] = useState<Application[]>(initialApplications)
     const [filteredApplications, setFilteredApplications] = useState<Application[]>([])
 
     async function getApplications () {
@@ -23,10 +24,6 @@ export default function ApplicationsClient({session}: Params) {
       const data = await res.json();
       setApplications(data);
     }
-
-    useEffect(() => {
-      getApplications();
-  }, [])
 
     return (
         <div className="flex flex-1 flex-col gap-5">
