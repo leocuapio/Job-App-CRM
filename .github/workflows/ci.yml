@@ -1,18 +1,36 @@
 name: CI
 
-#when should github run this workflow (when you push or pr)
+# when should GitHub run this workflow (when you push or create/update a PR)
 on:
   push:
   pull_request:
 
-#here is a job I want Githubs machine to perform and calling it ...
+# here is a job I want GitHub's machine to perform, and I'm calling it build-and-check
 jobs:
   build-and-check:
 
-#Run this job on ubunty machine 
-runs-on: ubuntu-latest
+    # run this job on an Ubuntu machine
+    runs-on: ubuntu-latest
 
-#Take the code from my github repo and make it available on this machine
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+    # take the code from my GitHub repo and make it available on this machine
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # clean install
+      - name: Install dependencies
+        run: npm ci
+
+      # checks for potential problems and violations, then reports them
+      - name: Run Lint
+        run: npm run lint
+
+      # try to create the production version of my app
+      - name: Run build
+        run: npm run build
