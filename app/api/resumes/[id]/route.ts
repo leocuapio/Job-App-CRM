@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { DeleteObject$, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { s3 } from "@/lib/s3";
+import { getS3Client } from "@/lib/s3";
 
 export async function GET(req: Request, {params}: {params: Promise<{id: string}>}) {
     const {id} = await params
@@ -40,7 +40,7 @@ export async function GET(req: Request, {params}: {params: Promise<{id: string}>
         Key: resume.fileUrl,
     })
 
-    const pdf = await getSignedUrl(s3, command, {expiresIn: 3600})
+    const pdf = await getSignedUrl(getS3Client(), command, {expiresIn: 3600})
     return NextResponse.json(pdf)
 }
 
@@ -83,7 +83,7 @@ export async function DELETE(req: Request, {params}: {params: Promise<{id: strin
         Key: resume?.fileUrl,
     })
     try {
-        const response = await s3.send(command);
+        const response = await getS3Client().send(command);
         console.log("Sucess", response)
     } catch (err) {
         console.error("Error", err)

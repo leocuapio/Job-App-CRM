@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { s3 } from "@/lib/s3";
+import { getS3Client} from "@/lib/s3";
 import {PutObjectCommand} from "@aws-sdk/client-s3";
 import { resumeQueue } from "@/lib/queue";
 
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
         const key = `resumes/${session.user.id}/${crypto.randomUUID()}-${file.name}`
 
-        await s3.send(
+        await getS3Client().send(
             new PutObjectCommand({
                 Bucket: process.env.AWS_S3_BUCKET_NAME,
                 Key: key,

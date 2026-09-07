@@ -2,7 +2,7 @@ import { Worker, Job } from 'bullmq';
 import {redis} from "@/lib/redis"
 import prisma from '@/lib/prisma';
 import {GetObjectCommand } from "@aws-sdk/client-s3";
-import { s3 } from '@/lib/s3';
+import { getS3Client } from '@/lib/s3';
 import { PDFParse } from "pdf-parse"
 
 
@@ -36,7 +36,7 @@ const worker = new Worker("resume-processing", async (job: Job) => {
         Key: resume.fileUrl
     })
 
-    const response = await s3.send(command)
+    const response = await getS3Client().send(command)
     console.log("S3 response:", response);
 
     if (!response.Body){
