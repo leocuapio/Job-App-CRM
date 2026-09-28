@@ -6,7 +6,9 @@ import { getS3Client } from '@/lib/s3';
 import { PDFParse } from "pdf-parse"
 
 
-const worker = new Worker("resume-processing", async (job: Job) => {
+const worker = new Worker(
+    "resume-processing",
+    async (job: Job) => {
   
   console.log("Processing job:", job.id)
   console.log("Resume ID:", job.data.resumeId);
@@ -73,7 +75,10 @@ const worker = new Worker("resume-processing", async (job: Job) => {
 },
 {
     connection: redis,
-});
+    concurrency: 1,
+    drainDelay: 10,
+  }
+);
 
 worker.on("completed", (job) => {
     console.log(`Job ${job.id} completed`);

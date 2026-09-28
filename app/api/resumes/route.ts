@@ -79,9 +79,19 @@ export async function POST(request: Request) {
             process.env.REDIS_URL?.replace(/:[^:@]*@/, ":PASSWORD@")
           );
 
-        const job = await resumeQueue.add("process-resume", {
-            resumeId: data.id
-        })
+        // const job = await resumeQueue.add("process-resume", {
+        //     resumeId: data.id
+        // })
+
+        const job = await resumeQueue.add(
+            "process-resume",
+            { resumeId: data.id},
+            {
+              attempts: 1,
+              removeOnComplete: true,
+              removeOnFail: true,
+            }
+          );
 
         console.log("Added job:", job.id);
         return NextResponse.json(
