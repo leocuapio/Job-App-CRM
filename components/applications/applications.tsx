@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Application } from "@/types/application";
 import EditApplication from "./editApplication";
 import DeleteApplication from "./delApplication";
@@ -13,8 +13,9 @@ interface Params {
     applications: Application[];
     getApplications: () => void;
     filteredApplications: Application[];
+    view: "board" | "table";
 }
-export default function Applications({sortOption, applications, getApplications, filteredApplications} : Params) {
+export default function Applications({sortOption, applications, getApplications, filteredApplications, view} : Params) {
     const [editApp, setEditApp] = useState<Application | null>(null);
     const [delApp, setDelApp] = useState<Application | null>(null);
 
@@ -70,17 +71,85 @@ export default function Applications({sortOption, applications, getApplications,
     };
 
 
+    const statusTone = (status: string) =>
+        columns.find((column) => column.title === status)?.tone ?? "bg-[#ede6dc] text-[#655846]";
+
+    const actionButtons = (application: Application) => (
+        <div className="flex shrink-0 gap-1">
+            <button
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-[#d8d0c5] text-[#5f574f] transition hover:border-[#9f9285] hover:bg-[#f5f0e9] focus:outline-none focus:ring-2 focus:ring-[#d7cec2]"
+                onClick={() => {handleOpen(); setEditApp(application)}}
+                aria-label={`Edit ${application.company}`}
+                title="Edit"
+            >
+                <EditOutlinedIcon fontSize="small" />
+            </button>
+            <button
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-[#ead2cb] text-[#9a4f43] transition hover:border-[#c99286] hover:bg-[#fbefec] focus:outline-none focus:ring-2 focus:ring-[#efcfc7]"
+                onClick={() => {handleDelClickOpen(); setDelApp(application)}}
+                aria-label={`Delete ${application.company}`}
+                title="Delete"
+            >
+                <DeleteOutlineOutlinedIcon fontSize="small" />
+            </button>
+        </div>
+    );
+
     return (
-        <div className="grid gap-4 lg:grid-cols-4">
-            {/* <pre>{JSON.stringify(applications, null, 2)}</pre> */}
-            {/* {applications.map((application) => (
-                <div key={application.id}>
-                    <p className="text-white">{application.company}</p>
-                    <p className="text-white">{application.id}</p>
-                    <button className="text-white" onClick={() => {handleOpen(); setEditApp(application)}}>Edit</button> <br />
-                    <button className="text-white" onClick={() => {handleDelClickOpen(); setDelApp(application)}}>Delete</button>
+        <>
+        {view === "table" ? (
+            <div className="overflow-hidden rounded-lg border border-[#ded7cc] bg-white shadow-[0_18px_60px_rgba(34,31,31,0.06)]">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full border-collapse text-left">
+                        <thead>
+                            <tr className="border-b border-[#eee8df] bg-[#fbfaf7] text-xs font-semibold uppercase tracking-[0.12em] text-[#7b7166]">
+                                <th className="px-4 py-3">Company</th>
+                                <th className="px-4 py-3">Position</th>
+                                <th className="px-4 py-3">Status</th>
+                                <th className="px-4 py-3">Location</th>
+                                <th className="px-4 py-3">Salary</th>
+                                <th className="px-4 py-3">Applied</th>
+                                <th className="px-4 py-3">Notes</th>
+                                <th className="px-4 py-3"><span className="sr-only">Actions</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {sortedApplications.length === 0 ? (
+                                <tr>
+                                    <td colSpan={8} className="px-4 py-10 text-center text-sm text-[#8a8075]">
+                                        No applications here yet.
+                                    </td>
+                                </tr>
+                            ) : (
+                                sortedApplications.map((application) => (
+                                    <tr key={application.id} className="border-b border-[#eee8df] last:border-0">
+                                        <td className="px-4 py-3 text-sm font-semibold text-[#221f1f]">{application.company}</td>
+                                        <td className="px-4 py-3 text-sm text-[#6d655c]">{application.position}</td>
+                                        <td className="px-4 py-3">
+                                            <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusTone(application.status)}`}>
+                                                {application.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3 text-sm text-[#6d655c]">{application.location || "Location not listed"}</td>
+                                        <td className="px-4 py-3 text-sm text-[#6d655c]">{formatSalary(application.salary)}</td>
+                                        <td className="px-4 py-3 text-sm text-[#6d655c]">{formatDate(application.dateApplied)}</td>
+                                        <td className="max-w-56 px-4 py-3 text-sm text-[#5f574f]">
+                                            {application.notes ? (
+                                                <p className="line-clamp-2">{application.notes}</p>
+                                            ) : (
+                                                <span className="text-[#8a8075]">—</span>
+                                            )}
+                                        </td>
+                                        <td className="px-4 py-3">{actionButtons(application)}</td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
                 </div>
-            ))} */}
+            </div>
+        ) : (
+        <div className="grid gap-4 lg:grid-cols-4">
             {columns.map((column) => (
                 <section
                     key={column.key}
@@ -113,24 +182,7 @@ export default function Applications({sortOption, applications, getApplications,
                                                 {application.position}
                                             </p>
                                         </div>
-                                        <div className="flex shrink-0 gap-1">
-                                            <button
-                                                className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-[#d8d0c5] text-[#5f574f] transition hover:border-[#9f9285] hover:bg-[#f5f0e9] focus:outline-none focus:ring-2 focus:ring-[#d7cec2]"
-                                                onClick={() => {handleOpen(); setEditApp(application)}}
-                                                aria-label={`Edit ${application.company}`}
-                                                title="Edit"
-                                            >
-                                                <EditOutlinedIcon fontSize="small" />
-                                            </button>
-                                            <button
-                                                className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-[#ead2cb] text-[#9a4f43] transition hover:border-[#c99286] hover:bg-[#fbefec] focus:outline-none focus:ring-2 focus:ring-[#efcfc7]"
-                                                onClick={() => {handleDelClickOpen(); setDelApp(application)}}
-                                                aria-label={`Delete ${application.company}`}
-                                                title="Delete"
-                                            >
-                                                <DeleteOutlineOutlinedIcon fontSize="small" />
-                                            </button>
-                                        </div>
+                                        {actionButtons(application)}
                                     </div>
 
                                     <div className="mt-4 grid gap-2 text-sm text-[#6d655c]">
@@ -150,12 +202,14 @@ export default function Applications({sortOption, applications, getApplications,
                     </div>
                 </section>
             ))}
+        </div>
+        )}
             {editApp && 
             <EditApplication key = {editApp.id} open = {open} handleClose= {handleClose} editApp = {editApp } refresh = {getApplications}/>
             }
             {delApp && 
             <DeleteApplication open = {delOpen} handleClose = {handleDelClose} delApp = {delApp} refresh = {getApplications}/>
             }
-        </div>
+        </>
     )
 }

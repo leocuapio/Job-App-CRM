@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import { Application } from "@/types/application";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -39,9 +40,15 @@ interface FormData {
 }
 
 
-export default function ApplicationForm() {
+interface ApplicationFormProps {
+    onCreated: (application: Application) => void;
+}
+
+export default function ApplicationForm({ onCreated }: ApplicationFormProps) {
     const [formData, setformData] = useState<FormData>({company: "", position: "", status: "", location: "", dateApplied: "", salary: "", notes: ""})
     const [open, setOpen] = useState(false);
+    const [error, setError] = useState("");
+    const [submitting, setSubmitting] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -50,19 +57,29 @@ export default function ApplicationForm() {
       };
 
 
-    async function handleSubmit() {
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        setError("");
+        setSubmitting(true);
         const resData = {...formData, salary: formData.salary === "" ? null : formData.salary };
-        const res = await fetch("/api/applications", 
-            {
+        try {
+            const res = await fetch("/api/applications", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(resData),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.error || "Could not create the application.");
             }
-        )
-        const data = await res.json();
-        console.log(data)
+            onCreated(data as Application);
+            setformData({company: "", position: "", status: "", location: "", dateApplied: "", salary: "", notes: ""});
+            setOpen(false);
+        } catch (submitError) {
+            setError(submitError instanceof Error ? submitError.message : "Could not create the application.");
+        } finally {
+            setSubmitting(false);
+        }
     }
 
     return (
@@ -126,7 +143,8 @@ export default function ApplicationForm() {
                             <MenuItem value={"Offer"}>Offer</MenuItem>
                         </Select>
                         </FormControl>
-                        <button className="mt-2 rounded-md bg-[#221f1f] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#393431] focus:outline-none focus:ring-2 focus:ring-[#221f1f] focus:ring-offset-2" type="submit">Submit</button>
+                        {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+                        <button className="mt-2 rounded-md bg-[#221f1f] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#393431] focus:outline-none focus:ring-2 focus:ring-[#221f1f] focus:ring-offset-2 disabled:opacity-60" type="submit" disabled={submitting}>{submitting ? "Saving…" : "Submit"}</button>
                     </form>
                     </Box>
                 </Modal>

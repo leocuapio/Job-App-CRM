@@ -1,6 +1,6 @@
 import { signIn, signOut } from "@/lib/auth";
 
-export function SignIn({ provider }: { provider?: string }) {
+export function SignIn({ provider }: { provider: string }) {
   const providerLabel = provider === "github" ? "GitHub" : provider === "google" ? "Google" : provider;
 
   return (
